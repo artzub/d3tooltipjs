@@ -57,8 +57,8 @@ d3.helper.tooltip = d3.helper.tooltip || function(){
         }
         tooltipDiv.style('position', 'absolute')
             .style('z-index', 1001);
-        mm.call(this, arguments);
-        doText.call(this, arguments);
+        mm.apply(this, arguments);
+        doText.apply(this, arguments);
     }
 
     function mm(d, i) {
