@@ -83,9 +83,9 @@ d3.helper.tooltip = d3.helper.tooltip || function(){
         }
 
         selection
-            .on("mouseover", mover)
-            .on('mousemove', mm)
-            .on("mouseout", mout);
+            .on("mouseover.tooltip", mover)
+            .on('mousemove.tooltip', mm)
+            .on("mouseout.tooltip", mout);
     }
 
     tooltip.attr = function(name, value) {
