@@ -14,79 +14,82 @@ d3.helper.tooltip = d3.helper.tooltip || function(){
         styles = [],
         _w, _h, _p = {x: 16, y: 16};
 
-    function tooltip(selection) {
-
-        function doText(d, i) {
-            // Crop text arbitrarily
-            tooltipDiv.html(
+    function doText(d, i) {
+        // Crop text arbitrarily
+        tooltipDiv.html(
                 typeof text === "function"
-                    ? text(d, i)
-                    : typeof text !== "undefined"
-                    ? text
-                    : ''
-            );
+                ? text(d, i)
+                : typeof text !== "undefined"
+                ? text
+                : ''
+        );
+    }
+
+    function mover(d, i) {
+
+        var key, name, value;
+
+        // Clean up lost tooltips
+        body.selectAll('div.tooltip').remove();
+
+        // Append tooltip
+        tooltipDiv = body.append('div');
+
+        for (key in attrs) {
+            if (!attrs.hasOwnProperty(key))
+                continue;
+            name = attrs[key][0];
+            if (typeof attrs[key][1] === "function") {
+                value = attrs[key][1](d, i);
+            } else value = attrs[key][1];
+            tooltipDiv.attr(name, value);
         }
+        tooltipDiv.classed("tooltip", true);
 
-        function mover(d, i) {
-
-            var key, name, value;
-
-            // Clean up lost tooltips
-            body.selectAll('div.tooltip').remove();
-
-            // Append tooltip
-            tooltipDiv = body.append('div');
-
-            for (key in attrs) {
-                if (!attrs.hasOwnProperty(key))
-                    continue;
-                name = attrs[key][0];
-                if (typeof attrs[key][1] === "function") {
-                    value = attrs[key][1](d, i);
-                } else value = attrs[key][1];
-                tooltipDiv.attr(name, value);
-            }
-            tooltipDiv.classed("tooltip", true);
-
-            for (key in styles) {
-                if (!styles.hasOwnProperty(key))
-                    continue;
-                name = styles[key][0];
-                if (typeof attrs[key][1] === "function") {
-                    value = styles[key][1](d, i);
-                } else value = styles[key][1];
-                tooltipDiv.style(name, value);
-            }
-            tooltipDiv.style('position', 'absolute')
-                .style('z-index', 1001);
-            mm(d, i);
-            doText(d, i);
+        for (key in styles) {
+            if (!styles.hasOwnProperty(key))
+                continue;
+            name = styles[key][0];
+            if (typeof attrs[key][1] === "function") {
+                value = styles[key][1](d, i);
+            } else value = styles[key][1];
+            tooltipDiv.style(name, value);
         }
+        tooltipDiv.style('position', 'absolute')
+            .style('z-index', 1001);
+        mm(d, i);
+        doText(d, i);
+    }
 
-        function mm(d, i) {
-            // Move tooltip
-            var absoluteMousePos = d3.mouse(body.node());
+    function mm(d, i) {
+        // Move tooltip
+        var absoluteMousePos = d3.mouse(body.node());
 
-            tooltipDiv
-                .style('left', (absoluteMousePos[0] > _w/2
-                    ? absoluteMousePos[0] - tooltipDiv.node().clientWidth - _p.x
-                    : absoluteMousePos[0] + _p.x) + 'px')
-                .style('top', (absoluteMousePos[1] > _h/2
-                    ? absoluteMousePos[1] - tooltipDiv.node().clientHeight - _p.y
-                    : absoluteMousePos[1] + _p.y) + 'px');
-            //doText(d, i);
-        }
+        tooltipDiv
+            .style('left', (absoluteMousePos[0] > _w/2
+                ? absoluteMousePos[0] - tooltipDiv.node().clientWidth - _p.x
+                : absoluteMousePos[0] + _p.x) + 'px')
+            .style('top', (absoluteMousePos[1] > _h/2
+                ? absoluteMousePos[1] - tooltipDiv.node().clientHeight - _p.y
+                : absoluteMousePos[1] + _p.y) + 'px');
+        //doText(d, i);
+    }
 
-        function mout(d, i){
-            // Remove tooltip
-            tooltipDiv.remove();
-        }
+    function mout(d, i){
+        // Remove tooltip
+        tooltipDiv.remove();
+    }
 
+    function tooltip(selection) {
         selection
             .on("mouseover.tooltip", mover)
             .on('mousemove.tooltip', mm)
             .on("mouseout.tooltip", mout);
     }
+
+    tooltip.mouseover = mover;
+    tooltip.mousemove = mm;
+    tooltip.mouseout = mout;
 
     tooltip.attr = function(name, value) {
         attrs.push(arguments);
