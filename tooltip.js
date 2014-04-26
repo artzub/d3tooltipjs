@@ -71,7 +71,7 @@ d3.helper.tooltip = d3.helper.tooltip || function(){
         var absoluteMousePos = e ? [e.pageX, e.pageY] : [0, 0];
 
 
-        tooltipDiv
+        tooltipDiv && tooltipDiv.style && tooltipDiv
             .style('left', (absoluteMousePos[0] > _w/2
                 ? absoluteMousePos[0] - tooltipDiv.node().clientWidth - _p.x
                 : absoluteMousePos[0] + _p.x) + 'px')
@@ -83,7 +83,7 @@ d3.helper.tooltip = d3.helper.tooltip || function(){
 
     function mout(d, i){
         // Remove tooltip
-        tooltipDiv.remove();
+        tooltipDiv && tooltipDiv.remove();
     }
 
     function tooltip(selection) {
