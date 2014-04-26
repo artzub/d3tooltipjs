@@ -57,13 +57,19 @@ d3.helper.tooltip = d3.helper.tooltip || function(){
         }
         tooltipDiv.style('position', 'absolute')
             .style('z-index', 1001);
-        mm(d, i);
-        doText(d, i);
+        mm.call(this, arguments);
+        doText.call(this, arguments);
     }
 
     function mm(d, i) {
         // Move tooltip
-        var absoluteMousePos = d3.mouse(body.node());
+        //var absoluteMousePos = d3.mouse(body.node());
+
+        var e = d3.event;
+        if (arguments.length > 3)
+            e = arguments[3];
+        var absoluteMousePos = e ? [e.pageX, e.pageY] : [0, 0];
+
 
         tooltipDiv
             .style('left', (absoluteMousePos[0] > _w/2
